@@ -1,0 +1,14 @@
+POST /index.php HTTP/1.1
+Host: natas27.natas.labs.overthewire.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.2.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://natas27.natas.labs.overthewire.org/index.php
+Cookie: __cfduid=d9a9da0b120557a6e098dca07b9dee58c1421857633
+Authorization: Basic bmF0YXMyNzo1NVRCanBQWlVVSmdWUDViM0JuYkc2T045dURQVnpDSg==
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 27
+
+username=test&password=test

