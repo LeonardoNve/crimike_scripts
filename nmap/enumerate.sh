@@ -38,6 +38,13 @@ while read ip; do
         dirb http://$ip >> $ip.info
         echo "Done"
     fi
+    https=$(cat ${ip}_simple_tcp.nmap | grep "443/tcp")
+    if [[  $https == *"443"* ]]
+    then
+        echo -n "Running sslscan for $ip ......."
+        sslscan --xml=${ip}.ssl ${ip}:443
+        echo "Done"
+    fi
     dns=$(cat ${ip}_simple_tcp.nmap | grep "53/tcp")
     if [[ $dns == *"53"* ]]
     then
