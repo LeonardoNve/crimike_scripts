@@ -1,0 +1,28 @@
+#Just a list
+
+#DNS
+dig @$ip axfr  #dns zone transfer
+dig chaos.txt @<ip> version.bind #dns info
+dig ptr <ip_reverse.in-addr.arp> @dnsserver #dns find fqdn of machine - try 127.0.0.1
+
+#HTTP
+dirb http://$ip 
+nikto -Cgidirs all -host <ip> -ssl #http force ssl
+nikto -Cgidirs all -host <ip> -Display 3 #http show requests
+nikto -Cgidirs all -host <ip> -id user:pass #http basic auth
+hoppy -h <url> -a user:pass #http basic auth
+dirb -c <cookie> -p <proxy> -u user:pass #http dirb with cookies, proxy and basic auth
+
+
+#SSL
+
+#NFS
+sudo showmount -e $ip 
+
+#SQLMAP
+
+#SNMP
+sudo onesixtyone -c /usr/share/metasploit-framework/data/wordlists/snmp_default_pass.txt $ip 
+
+#NMAP
+sudo nmap -v -Pn -v -A -oA "${ip}_simple_tcp" $ip > /dev/null

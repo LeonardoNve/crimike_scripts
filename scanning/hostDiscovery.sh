@@ -1,7 +1,7 @@
 echo "Running simple ping scan..."
 sudo nmap -sn $1 | ./getIpsFromFile.sh | tee excludedIps
 echo "Running advanced host discovery:"
-sudo nmap -sn -PS80,22,56273 -PA80,22,49163 -PU53,12739 -PP -PM -PR -PO --excludefile excludedIps $1 | ./getIpsFromFile.sh | tee -a excludedIps
+sudo nmap -sn -PS80,22,56273 -PA80,22,49163 -PU53,12739 -PP -PM -PO --excludefile excludedIps $1 | ./getIpsFromFile.sh | tee -a excludedIps
 echo "Running udp-proto-scanner"
 sudo nmap -sL --excludefile excludedIps $1 | ./getIpsFromFile.sh >> udp.ips
 udp-proto-scanner.pl --file udp.ips | ./getIpsFromFile.sh | sort | uniq > udp.discovery
