@@ -94,11 +94,13 @@ parse_udp()
     snmp=$(cat $1_simple_udp.nmap | grep "161/udp")
     if [[ $snmp == *"161/udp"* ]]
     then
-        echo  "[smtp]Found SMTP service on $1...."
-        echo -3 "\n\n[+] Found SMTP service" >> $1.info
+        echo  "[smtp]Found SMTP service on $1, running 161"
+        echo -e "\n\n[+] Found SMTP service" >> $1.info
+        echo -e "\n\n=======OneSixtyOne======" >> ${ip}.info
+        sudo onesixtyone -c /usr/share/metasploit-framework/data/wordlists/snmp_default_pass.txt $1 >> $1.info
     fi
     sudo udp-proto-scanner.pl $1 > $1_proto.udp
-    echo "[$1}UDP ProtoScanner done"
+    echo "[$1]UDP ProtoScanner done"
 }
 
 if [ $# -ge 2 ]
