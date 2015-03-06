@@ -15,6 +15,8 @@ dirb -c <cookie> -p <proxy> -u user:pass #http dirb with cookies, proxy and basi
 
 
 #SSL
+sslscan --xml=$1_ssl.xml $1 > $1_ssl.scan
+/home/cristi/tools/ssl-cipher-suite-enum-v1.0.0/ssl-cipher-suite-enum.pl $1 > $1_ssl.enum
 
 #NFS
 sudo showmount -e $ip 
@@ -25,4 +27,10 @@ sudo showmount -e $ip
 sudo onesixtyone -c /usr/share/metasploit-framework/data/wordlists/snmp_default_pass.txt $ip 
 
 #NMAP
-sudo nmap -v -Pn -v -A -oA "${ip}_simple_tcp" $ip > /dev/null
+
+
+#BASH
+for file in $(ls * | grep gnmap); do cat $(echo $file | ../getIpsFromFile.sh)/$file; done  #bash - cat all gnmap files from enumerate output
+
+
+(<!--(.*?)-->)|(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)|(^'.*$)|(^#.*$) # regex for website comments

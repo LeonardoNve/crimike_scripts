@@ -8,80 +8,80 @@ fi
 
 host_and_ping()
 {
-    echo -e "======Host======" >$1.info
-    sudo host $1 >> $1.info
-    echo -e "\n\n======Traceroute======" >> $1.info
-    sudo traceroute $1 >> $1.info
-    echo -e "\n\n======Ping with record route======" >> $1.info
-    sudo ping -R -c 1 $1 | sed '1,/RR/d' | awk '/statistics/ {exit} {print}' >> $1.info
+    echo -e "======Host======" >$1/$1.info
+    sudo host $1 >> $1/$1.info
+    echo -e "\n\n======Traceroute======" >> $1/$1.info
+    sudo traceroute $1 >> $1/$1.info
+    echo -e "\n\n======Ping with record route======" >> $1/$1.info
+    sudo ping -R -c 1 $1 | sed '1,/RR/d' | awk '/statistics/ {exit} {print}' >> $1/$1.info
 }
 
 parse_tcp()
 {
-    sudo nmap -v -Pn -A -oA "$1_simple_tcp" $1 > /dev/null
+    sudo nmap -v -Pn -A -oA "$1/$1_simple_tcp" $1 > /dev/null
     echo "[$1] Simple TCP Scan done"
-    OsName=$(cat $1_simple_tcp.nmap | grep "OS details")
-    echo -e "\n\n==========Operating System==========" >> $1.info
-    echo $OsName >> $1.info
+    OsName=$(cat $1/$1_simple_tcp.nmap | grep "OS details")
+    echo -e "\n\n==========Operating System==========" >> $1/$1.info
+    echo $OsName >> $1/$1.info
     if [[ $OsName == *"Windows"* ]]
     then
         echo  "[+]Enum4linux on: $1 ........"
-        sudo enum4linux $1 > $1.enum
+        sudo enum4linux $1 > $1/$1.enum
         echo "[$1]Enum4linux done"
     fi
-    http=$(cat $1_simple_tcp.nmap | grep "80/tcp")
+    http=$(cat $1/$1_simple_tcp.nmap | grep "80/tcp" | grep "open")
     if [[ $http == *"80"* ]]
     then
         echo  "[http]Found http website on $1 ........"
-        echo -e "\n\n[+]Found http website(port 80)" >> $1.info
+        echo -e "\n\n[+]Found http website(port 80)" >> $1/$1.info
     fi
-    https=$(cat $1_simple_tcp.nmap | grep "443/tcp")
+    https=$(cat $1/$1_simple_tcp.nmap | grep "443/tcp" | grep "open")
     if [[  $https == *"443"* ]]
     then
         echo  "[https]Found https website on $1 ......."
-        echo -e "\n\n[+]Found https website(port 443)" >> $1.info
+        echo -e "\n\n[+]Found https website(port 443)" >> $1/$1.info
     fi
-    dns=$(cat $1_simple_tcp.nmap | grep "53/tcp")
+    dns=$(cat $1/$1_simple_tcp.nmap | grep "53/tcp" | grep "open")
     if [[ $dns == *"53"* ]]
     then
         echo  "[dns]Found DNS service on $1 ......."
-        echo -e "\n\n[+] Found dns service" >> $1.info
+        echo -e "\n\n[+] Found dns service" >> $1/$1.info
     fi
-    ssh=$(cat $1_simple_tcp.nmap  | grep "22/tcp")
+    ssh=$(cat $1/$1_simple_tcp.nmap  | grep "22/tcp" | grep "open")
     if [[ $ssh == *"22"* ]]
     then
         echo  "[ssh]Found ssh service on $1........"
-        echo -e "\n\n[+] Found ssh service" >> $1.info
+        echo -e "\n\n[+] Found ssh service" >> $1/$1.info
     fi
-    nfs=$(cat $1_simple_tcp.nmap | grep "2049/tcp")
+    nfs=$(cat $1/$1_simple_tcp.nmap | grep "2049/tcp" | grep "open")
     if [[ $nfs == *"2049"* ]]
     then
         echo  "[nfs]Found nfs service on $1......"
-        echo -e "\n\n[+] Found nfs service" >> $1.info
+        echo -e "\n\n[+] Found nfs service" >> $1/$1.info
     fi
-    rdp=$(cat $1_simple_tcp.nmap | grep "3389/tcp")
+    rdp=$(cat $1/$1_simple_tcp.nmap | grep "3389/tcp" | grep "open")
     if [[ $rdp == *"3389"* ]]
     then
         echo  "[rdp]Found rdp service on $1......"
-        echo -e "\n\n[+] Found rdp service" >> $1.info
+        echo -e "\n\n[+] Found rdp service" >> $1/$1.info
     fi
-    ftp=$(cat $1_simple_tcp.nmap | grep "21/tcp")
+    ftp=$(cat $1/$1_simple_tcp.nmap | grep "21/tcp" | grep "open")
     if [[ $ftp == *"21"* ]]
     then
         echo  "[ftp]Found FTP service on $1......"
-        echo -e "\n\n[+] Found ftp service" >> $1.info
+        echo -e "\n\n[+] Found ftp service" >> $1/$1.info
     fi
-    smtp=$(cat $1_simple_tcp.nmap | grep "25/tcp")
+    smtp=$(cat $1/$1_simple_tcp.nmap | grep "25/tcp" | grep "open")
     if [[ $smtp == *"25"* ]]
     then
         echo  "[smtp]Found SMTP service on $1....."
-        echo -e "\n\n[+] Found SMTP service" >> $1.info
+        echo -e "\n\n[+] Found SMTP service" >> $1/$1.info
     fi
-    tftp=$(cat $1_simple_tcp.nmap | grep "69/tcp")
+    tftp=$(cat $1/$1_simple_tcp.nmap | grep "69/tcp" | grep "open")
     if [[ $tftp == *"69"* ]]
     then
         echo  "[tftp]Found tftp service on $1....."
-        echo -e "\n\n[+] Found tftp service" >> $1.info
+        echo -e "\n\n[+] Found tftp service" >> $1/$1.info
     fi
     #TODO: kerberos, sftp, dcom, netbios, ldap, ldaps, mssql, mysql, postgresql
     echo  "[$1]Finished parsing tcp services"
@@ -89,17 +89,17 @@ parse_tcp()
 
 parse_udp()
 {
-    sudo nmap -v -Pn -v -A -sU --top-ports 100 -oA "$1_simple_udp" $1 > /dev/null
+    sudo nmap -v -Pn -v -A -sU --top-ports 100 -oA "$1/$1_simple_udp" $1 > /dev/null
     echo "[$1]Simple UDP scan done"
-    snmp=$(cat $1_simple_udp.nmap | grep "161/udp")
+    snmp=$(cat $1/$1_simple_udp.nmap | grep "161/udp" | grep "open")
     if [[ $snmp == *"161/udp"* ]]
     then
-        echo  "[smtp]Found SMTP service on $1, running 161"
-        echo -e "\n\n[+] Found SMTP service" >> $1.info
-        echo -e "\n\n=======OneSixtyOne======" >> ${ip}.info
-        sudo onesixtyone -c /usr/share/metasploit-framework/data/wordlists/snmp_default_pass.txt $1 >> $1.info
+        echo  "[snmp]Found SNMP service on $1, running 161"
+        echo -e "\n\n[+] Found SNMP service" >> $1/$1.info
+        echo -e "\n\n=======OneSixtyOne======" >> $1/${1}.info
+        sudo onesixtyone -c /usr/share/metasploit-framework/data/wordlists/snmp_default_pass.txt $1 >> $1/$1.info
     fi
-    sudo udp-proto-scanner.pl $1 > $1_proto.udp
+    sudo udp-proto-scanner.pl $1 > $1/$1_proto.udp
     echo "[$1]UDP ProtoScanner done"
 }
 
@@ -107,6 +107,11 @@ if [ $# -ge 2 ]
 then
     echo -e "***NOTE: Any argument past '$1' is not taken into consideration......just so you know\n\n"
 fi
+
+echo "[+]Creating folders for each IP in the list"
+while read ip; do
+    mkdir $ip
+done<$1
 
 echo "[+]Running host and traceroute on the ip list"
 while read ip; do
@@ -129,7 +134,7 @@ wait
 
 echo "Running full TCP scan on list"
 while read ip; do
-    sudo nmap -v -Pn -v -A -p- -oA "${ip}_full_tcp" $ip > /dev/null &
+    sudo nmap -v -Pn -v -A -p- -oA "${ip}/${ip}_full_tcp" $ip > /dev/null &
 done<$1
 
 wait
@@ -137,5 +142,8 @@ echo "[++]Finished Full TCP Scan"
 
 echo "Running Default UDP - 1k ports -  scan on list"
 while read ip; do
-    sudo nmap -v -Pn -v -A -sU -oA "${ip}_full_udp" $ip > /dev/null &
+    sudo nmap -v -Pn -v -A -sU -oA "${ip}/${ip}_full_udp" $ip > /dev/null &
 done<$1
+
+wait
+echo "[++]Finished Full UDP Scan"
