@@ -1,0 +1,7 @@
+-a                  All enumerations
+-r                  Enumerate users by RID cycling
+-R range            RID range to use
+-l                  Get some limited information from the DC
+-s <file>           Brute-force share names
+
+
