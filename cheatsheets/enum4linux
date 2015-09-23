@@ -3,5 +3,7 @@
 -R range            RID range to use
 -l                  Get some limited information from the DC
 -s <file>           Brute-force share names
-
+-K n                Keep searching RIDs until n consective RIDs don't correspond to
+                    a username.  Impies RID range ends at 999999. Useful 
+                    against DCs.
 

@@ -19,8 +19,6 @@ for file in sys.argv[1:]:
                 port_number = int(port.split('/')[0])
                 stats[host].append(port_number)
 
-for key in sorted(stats):
-    print key,"(",len(stats[key]),") : ", sorted(stats[key])
 
 inverse_stats = {}
 
@@ -30,6 +28,14 @@ for key in stats:
             inverse_stats[port] = []
         inverse_stats[port].append(key)
 
+print "Ports: ",
+for key in sorted(inverse_stats):
+    print key,
+
+print
+
+for key in sorted(stats):
+    print key,"(",len(stats[key]),") : ", sorted(stats[key])
 for key in sorted(inverse_stats):
     print key,"(",len(inverse_stats[key]),") : ", sorted(inverse_stats[key])
 

@@ -17,7 +17,7 @@ fi
 
 host_and_ping()
 {
-    echo -e "======Host======" >$1/$1.info
+    echo -e "======Host======" >> $1/$1.info
     sudo host $1 >> $1/$1.info
     echo -e "\n\n======Traceroute======" >> $1/$1.info
     sudo traceroute $1 >> $1/$1.info
@@ -117,35 +117,35 @@ check_udp_services()
 
 run_full_tcp()
 {
-    sudo nmap --max-retries 5 -vv -n --reason -Pn -p- -A -oA "$1/$1_full_tcp" $1 > /dev/null
+    sudo nmap --max-retries 5 -vv -n --reason -Pn -p- -A -oA "$1/$1_full_tcp" $1 > "$1/$1_live" 2>&1
     echo "[$1] Full TCP Scan done"
     check_tcp_services $1
 }
 
 run_simple_tcp()
 {
-    sudo nmap -vv -n --reason -Pn -A -oA "$1/$1_simple_tcp" $1 > /dev/null
+    sudo nmap -vv -n --reason -Pn -A -oA "$1/$1_simple_tcp" $1 > "$1/$1_live" 2>&1  
     echo "[$1] Simple TCP Scan done"
     check_tcp_services $1
 }
 
 run_default_udp()
 {
-    sudo nmap --max-retries 5 -vv -n --reason -Pn -A -sU -oA "$1/$1_default_udp" $1 > /dev/null
+    sudo nmap --max-retries 5 -vv -n --reason -Pn -A -sU -oA "$1/$1_default_udp" $1 > "$1/$1_live_udp" 2>&1
     echo "[$1]Default UDP scan done"
     check_udp_services $1
 }
 
 run_full_udp()
 {
-    sudo nmap --max-retries 3 -vv -n --reason -Pn -A -sU -p- -oA "$1/$1_full_udp" $1 > /dev/null
+    sudo nmap --max-retries 3 -vv -n --reason -Pn -A -sU -p- -oA "$1/$1_full_udp" $1 > "$1/$1_live_udp" 2>&1
     echo "[$1]Full UDP scan done"
     check_udp_services $1
 }
 
 run_simple_udp()
 {
-    sudo nmap -vv -n --reason -Pn -v -A -sU --top-ports 100 -oA "$1/$1_simple_udp" $1 > /dev/null
+    sudo nmap -vv -n --reason -Pn -v -A -sU --top-ports 100 -oA "$1/$1_simple_udp" $1 > "$1/$1_live_udp" 2>&1
     echo "[$1]Simple UDP scan done"
     check_udp_services $1
 }

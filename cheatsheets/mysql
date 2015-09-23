@@ -42,6 +42,8 @@ SHOW GRANTS FOR 'username'@'hostname';
 
 # Find out who the current user is
 SELECT CURRENT_USER();
+SELECT USER();
+SELECT system_user();
 
 # To delete a table in the database
 DROP TABLE table_name;
@@ -72,3 +74,27 @@ select load_file("/etc/passwd")
 
 #write to local file
 select "testing" into outfile '/etc/testing'
+
+#version
+select @@version
+
+#list password hashes
+SELECT host, user, password from mysql.user
+
+#List databases
+SELECT schema_name FROM information_schema.schemata; — for MySQL >= v5.0
+SELECT distinct(db) FROM mysql.db — priv
+
+#List Columns
+SELECT table_schema, table_name, column_name FROM information_schema.columns WHERE table_schema != ‘mysql’ AND table_schema != ‘information_schema’
+
+#List tables
+SELECT table_schema,table_name FROM information_schema.tables WHERE table_schema != ‘mysql’ AND table_schema != ‘information_schema’
+
+#ASCII/char conversions
+SELECT char(65); # returns A
+SELECT ascii(‘A’); # returns 65
+
+#Time delay
+SELECT BENCHMARK(1000000,MD5(‘A’));
+SELECT SLEEP(5); # >= 5.0.12
