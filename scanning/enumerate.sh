@@ -19,10 +19,10 @@ host_and_ping()
 {
     echo -e "======Host======" >> $1/$1.info
     sudo host $1 >> $1/$1.info
-    echo -e "\n\n======Traceroute======" >> $1/$1.info
-    sudo traceroute $1 >> $1/$1.info
-    echo -e "\n\n======Ping with record route======" >> $1/$1.info
-    sudo ping -R -c 1 $1 | sed '1,/RR/d' | awk '/statistics/ {exit} {print}' >> $1/$1.info
+#    echo -e "\n\n======Traceroute======" >> $1/$1.info
+#    sudo traceroute $1 >> $1/$1.info
+#    echo -e "\n\n======Ping with record route======" >> $1/$1.info
+#    sudo ping -R -c 1 $1 | sed '1,/RR/d' | awk '/statistics/ {exit} {print}' >> $1/$1.info
 }
 
 run_enum4linux()

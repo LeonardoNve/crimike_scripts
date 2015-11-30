@@ -42,7 +42,7 @@ then
     echo "[+]Running nikto for $1"
     nikto -Cgidirs all -port $port -host $1 | tee ${1}_${port}.nikto
     echo "[+]Running hoppy for $1"
-    /home/cristi/tools/hoppy/hoppy -p $port -h http://$1 | tee ${1}_${port}.hoppy
+    /root/tools/hoppy/hoppy -p $port -h http://$1 | tee ${1}_${port}.hoppy
     echo "[+]Running dirb for $1"
     dirb http://${1}:${port} | tee ${1}_${port}.dirb
 fi
@@ -52,7 +52,7 @@ then
     echo "[+]Running nikto for $1"
     nikto -Cgidirs all -port $port -host $1 -id ${user}:${pass} | tee ${1}_${port}.nikto
     echo "[+]Running hoppy for $1"
-    /home/cristi/tools/hoppy/hoppy -p $port -h http://$1 -a ${user}:${pass} | tee ${1}_${port}.hoppy
+    /root/tools/hoppy/hoppy -p $port -h http://$1 -a ${user}:${pass} | tee ${1}_${port}.hoppy
     echo "[+]Running dirb for $1"
     dirb http://${1}:${port} -u ${user}:${pass} | tee ${1}_${port}.dirb
 fi

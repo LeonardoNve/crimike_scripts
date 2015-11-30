@@ -14,9 +14,12 @@ for file in sys.argv[1:]:
             host = line[5:line.find("()")]
             stats[host] = []
             data = line[line.find("Ports:")+6:]
+            data = data.split("Ignored")[0]
+            data = data.split("OS:")[0]
             ports = data.split(",")
             for port in ports:
                 port_number = int(port.split('/')[0])
+                #port_number = port.split('/')[0]
                 stats[host].append(port_number)
 
 
