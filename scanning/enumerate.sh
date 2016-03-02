@@ -222,3 +222,6 @@ fi
 while read ip; do
     run_enum4linux $ip
 done<$1
+
+
+reset
